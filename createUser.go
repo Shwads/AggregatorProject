@@ -2,7 +2,9 @@ package main
 
 import (
 	"AggregatorProject/internal/database"
+	"context"
 	"encoding/json"
+	"log"
 	"net/http"
 	"time"
 
@@ -31,11 +33,12 @@ func (apicfg apiConfig) createUser(res http.ResponseWriter, req *http.Request) {
 		Name:      receivedUser.Name,
 	}
 
-	// user, createUserErr := apicfg.DB.CreateUser(context.Background(), userParams)
-	// if createUserErr != nil {
-	// 	respondWithError(res, 501, createUserErr.Error())
-	// 	return
-	// }
+	user, createUserErr := apicfg.DB.CreateUser(context.Background(), userParams)
+	if createUserErr != nil {
+		respondWithError(res, 501, createUserErr.Error())
+		log.Print("Failed to add item to database")
+		return
+	}
 
-	respondWithJSON(res, 200, userParams)
+	respondWithJSON(res, 200, user)
 }

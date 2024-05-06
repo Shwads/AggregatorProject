@@ -39,6 +39,14 @@ func main() {
 	serveMux.HandleFunc("/v1/err", errorHandler)
 
 	serveMux.HandleFunc("POST /v1/users", apicfg.createUser)
+	serveMux.HandleFunc("GET /v1/users", apicfg.middlewareAuth(authedGetUser))
+
+	serveMux.HandleFunc("POST /v1/feeds", apicfg.middlewareAuth(apicfg.authedCreateFeed))
+	serveMux.HandleFunc("GET /v1/feeds", apicfg.getFeeds)
+
+	serveMux.HandleFunc("GET /v1/feed_follows", apicfg.middlewareAuth(apicfg.authedGetFeedFollows))
+	serveMux.HandleFunc("POST /v1/feed_follows", apicfg.middlewareAuth(apicfg.authedNewFeedFollow))
+	serveMux.HandleFunc("DELETE /v1/feed_follows/{feedFollowID}", apicfg.middlewareAuth(apicfg.authedDeleteFeedFollow))
 
 	corsMux := CORSMiddleware(serveMux)
 
