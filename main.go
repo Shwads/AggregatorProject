@@ -2,10 +2,15 @@ package main
 
 import (
 	"AggregatorProject/internal/database"
+	"AggregatorProject/internal/scraper"
+	"context"
 	"database/sql"
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/joho/godotenv"
 
@@ -33,6 +38,19 @@ func main() {
 		DB: dbQueries,
 	}
 
+	ctx, cancel := context.WithCancel(context.Background())
+
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+
+	go func() {
+		sig := <-sigChan
+		log.Printf("Received signal %s: Shutting down gracefully...", sig)
+		cancel()
+	}()
+
+	go scraper.ScraperWorker(ctx, dbQueries)
+
 	serveMux := http.NewServeMux()
 
 	serveMux.HandleFunc("/v1/readiness", readinessHandler)
@@ -55,9 +73,21 @@ func main() {
 		Handler: corsMux,
 	}
 
-	log.Printf("Server starting on port: %s...", port)
-	serverListenErr := server.ListenAndServe()
-	if serverListenErr != nil {
-		log.Fatal("Failed to start server")
+	go func() {
+		log.Printf("Server starting on port: %s...", port)
+		if serverListenErr := server.ListenAndServe(); serverListenErr != http.ErrServerClosed {
+			log.Print(serverListenErr)
+		}
+	}()
+
+	<-ctx.Done()
+
+	ctxShutdown, cancelShutdown := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancelShutdown()
+
+	if err := server.Shutdown(ctxShutdown); err != nil {
+		log.Fatalf("Server forced to shutdown: %s", err)
 	}
+
+	log.Println("Worker has been shutdown.")
 }
