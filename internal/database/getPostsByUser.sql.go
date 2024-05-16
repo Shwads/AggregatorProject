@@ -16,11 +16,17 @@ SELECT p.id, p.created_at, p.updated_at, p.title, p.url, p.description, p.publis
 JOIN feed_follows ff ON p.feed_id = ff.feed_id
 JOIN users u ON ff.user_id = u.id
 WHERE u.id = $1
-ORDER BY p.published_at
+ORDER BY p.published_at DESC
+LIMIT $2
 `
 
-func (q *Queries) GetPostsByUser(ctx context.Context, id uuid.UUID) ([]Post, error) {
-	rows, err := q.db.QueryContext(ctx, getPostsByUser, id)
+type GetPostsByUserParams struct {
+	ID    uuid.UUID
+	Limit int32
+}
+
+func (q *Queries) GetPostsByUser(ctx context.Context, arg GetPostsByUserParams) ([]Post, error) {
+	rows, err := q.db.QueryContext(ctx, getPostsByUser, arg.ID, arg.Limit)
 	if err != nil {
 		return nil, err
 	}
