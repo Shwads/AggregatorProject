@@ -46,10 +46,10 @@ func (apicfg apiConfig) authedCreateFeed(res http.ResponseWriter, req *http.Requ
 	}
 
 	responseBody := struct {
-		Feed   database.Feed       `json:"feed"`
+		Feed   responseFeed        `json:"feed"`
 		Follow database.FeedFollow `json:"feed_follow"`
 	}{
-		Feed:   feed,
+		Feed:   parseFeedStruct(feed),
 		Follow: feedFollow,
 	}
 

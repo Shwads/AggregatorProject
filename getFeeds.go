@@ -12,5 +12,7 @@ func (apicfg apiConfig) getFeeds(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	respondWithJSON(res, 201, feeds)
+	responseFeeds := Map(feeds, parseFeedStruct)
+
+	respondWithJSON(res, 201, responseFeeds)
 }

@@ -66,6 +66,8 @@ func main() {
 	serveMux.HandleFunc("POST /v1/feed_follows", apicfg.middlewareAuth(apicfg.authedNewFeedFollow))
 	serveMux.HandleFunc("DELETE /v1/feed_follows/{feedFollowID}", apicfg.middlewareAuth(apicfg.authedDeleteFeedFollow))
 
+	serveMux.HandleFunc("GET /v1/posts", apicfg.middlewareAuth(apicfg.authedGetUserPosts))
+
 	corsMux := CORSMiddleware(serveMux)
 
 	server := &http.Server{
