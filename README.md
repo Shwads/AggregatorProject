@@ -1,5 +1,5 @@
 # AggregatorProject
-An RSS aggregator
+An API project I made in Go for aggregrating and scraping RSS feeds. Users can register an account and add links to RSS feeds, the server scrapes feeds periodically with a worker and users can fetch posts from feeds they follow through the /v1/posts endpoint. User records and feed data is stored in a postgres server.
 
 ## Endpoints
 
@@ -39,7 +39,7 @@ Server checks the provided key with user's apikey and responds with the full use
     "CreatedAt": "2024-04-30T16:54:01.926718Z", 
     "UpdatedAt": "2024-04-30T16:54:01.926718Z",
     "Name": "Shwads",
-    "ApiKey": 3c48b9f25f488729bc70ebaf6ee14fb50c1dbb15d14f283c62bc9753a5be77d"
+    "ApiKey": "3c48b9f25f488729bc70ebaf6ee14fb50c1dbb15d14f283c62bc9753a5be77d"
 }
 ```
 
@@ -49,7 +49,7 @@ Authorised endpoint, accepts an authorisation header, as the above endpoint, and
 ```json
 {
     "name": "The Boot.dev Blog",
-    "url": : "https://blog.boot.dev/index.xml"
+    "url": "https://blog.boot.dev/index.xml"
 }
 ```
 
