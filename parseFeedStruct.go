@@ -2,6 +2,8 @@ package main
 
 import "AggregatorProject/internal/database"
 
+// sqlc gives us the LastFetchedAt timme as a sql.NullTime value which results in a nested object.
+// To clean up the response, we convert our Feed object into a new object when sending it in a response.
 func parseFeedStruct(feed database.Feed) responseFeed {
 	response := responseFeed{
 		ID:        feed.ID,

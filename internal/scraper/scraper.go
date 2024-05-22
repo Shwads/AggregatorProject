@@ -14,6 +14,7 @@ import (
 )
 
 func scrape(ctx context.Context, db *database.Queries) (errors map[string]error) {
+	// store any feed errors in a map object so that we can easily see which feeds failed
 	errors = make(map[string]error)
 
 	feeds, getNextFeedsErr := db.GetNextFeedsToFetch(ctx, 10)

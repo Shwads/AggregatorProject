@@ -13,6 +13,7 @@ import (
 	"github.com/google/uuid"
 )
 
+// external requests that want to create a feed follow pass through this function to pull the feed data from the request body.
 func (apicfg apiConfig) authedNewFeedFollow(res http.ResponseWriter, req *http.Request, user database.User) {
 
 	decoder := json.NewDecoder(req.Body)
@@ -41,6 +42,7 @@ func (apicfg apiConfig) authedNewFeedFollow(res http.ResponseWriter, req *http.R
 	respondWithJSON(res, 201, feedFollow)
 }
 
+// Create feed follows from internal functions where the feed data is passed in as a function parameter.
 func (apicfg apiConfig) createFollow(res http.ResponseWriter, feedId uuid.UUID, userId uuid.UUID) (database.FeedFollow, error) {
 	_, feedFindErr := apicfg.DB.GetFeedByID(context.Background(), feedId)
 	if feedFindErr == sql.ErrNoRows {

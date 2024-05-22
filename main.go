@@ -75,6 +75,7 @@ func main() {
 		Handler: corsMux,
 	}
 
+	// Initialise a goroutine to start the server
 	go func() {
 		log.Printf("Server starting on port: %s...", port)
 		if serverListenErr := server.ListenAndServe(); serverListenErr != http.ErrServerClosed {
@@ -82,8 +83,10 @@ func main() {
 		}
 	}()
 
+	// while the server is running, wait for a done signal on the context's channel
 	<-ctx.Done()
 
+	// Once the done signal is received, initiate the shutdown process to end our worker and shutdown the server gracefully.
 	ctxShutdown, cancelShutdown := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancelShutdown()
 
